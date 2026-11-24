@@ -21,6 +21,7 @@ def validate() -> None:
     data = output_path().read_bytes()
     assert not data.endswith(b"\n"), "entry.txt must not end with a newline"
     assert b"\n" not in data, "entry.txt must be a single line"
+    assert b"\r" not in data, "carriage return"
     text = data.decode("utf-8")
     assert 1 <= len(text) <= CHAR_LIMIT, f"length {len(text)} out of range 1-{CHAR_LIMIT}"
     assert text == text.strip(), "no leading/trailing whitespace allowed"
@@ -33,6 +34,8 @@ def main() -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_bytes(LINE.encode("utf-8"))
     validate()
+    import hashlib
+    print("sha256:", hashlib.sha256(LINE.encode("utf-8")).hexdigest())
 
 
 if __name__ == "__main__":
